@@ -1,0 +1,17 @@
+[Unit]
+Description=MyWebApp Task Tracker Service
+Requires=mywebapp.socket mariadb.service
+After=network.target mariadb.service
+
+[Service]
+Type=simple
+User=app
+Group=app
+WorkingDirectory=/opt/mywebapp
+Environment=APP_HOST=127.0.0.1 APP_PORT=5000 DB_HOST=127.0.0.1 DB_USER=webapp_user DB_PASSWORD=secure_password DB_NAME=mywebapp_db
+ExecStartPre=/opt/mywebapp/venv/bin/python /opt/mywebapp/mywebapp.py --migrate
+ExecStart=/opt/mywebapp/venv/bin/python /opt/mywebapp/mywebapp.py --host 127.0.0.1 --port 5000 --socket_fd 3
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
